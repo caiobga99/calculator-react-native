@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 
-import { Botao } from './components/Botao';
+import { Botao, BackspaceButton } from './components/Botao';
 
 export default function App() {
   return (
@@ -10,16 +10,7 @@ export default function App() {
         <View style={styles.box}>
           <Text style={styles.result}>0</Text>
         </View>
-        <View style={styles.backSpaceBox}>
-          <TouchableOpacity activeOpacity={0.5}>
-            <Image
-              source={{
-                uri: 'https://cdn-icons-png.flaticon.com/512/7156/7156272.png',
-              }}
-              style={styles.backSpace}
-            />
-          </TouchableOpacity>
-        </View>
+        <BackspaceButton value="backspace" />
       </View>
       <View style={styles.buttonsGroup}>
         <View style={styles.row}>
@@ -58,14 +49,14 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-   container: {
+  container: {
     flex: 1,
     widht: '100%',
     height: '70%',
     paddingTop: Constants.statusBarHeight,
     backgroundColor: '#000',
   },
-   display: {
+  display: {
     width: '100%',
     height: '30%',
     borderBottomWidth: 1,
@@ -79,10 +70,7 @@ const styles = StyleSheet.create({
     height: '75%',
     // wordBreak: 'break-all',
   },
-  backSpaceBox: {
-    // width: 'fit-content',
-    height: '25%',
-  },
+
   result: {
     color: '#ffffff',
     textAlign: 'right',

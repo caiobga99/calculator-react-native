@@ -1,4 +1,11 @@
-import { Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+  Image,
+  View,
+} from 'react-native';
 import { useState } from 'react';
 
 /*
@@ -6,24 +13,45 @@ ERROS
 Não é possivel inserir mais de 15 digitos.
 NUMERO / 0 = Erro
 */
-export const Botao = (props) => {
+export const Botao = ({ type, value }) => {
+  const [display, setDisplay] = useState(value);
+
+  const handleClickUpdateDisplay = (value) => {
+    setDisplay(value);
+    console.log(display);
+  };
+
   return (
     <TouchableOpacity
+      onPress={() => handleClickUpdateDisplay(value)}
       activeOpacity={0.8}
-      style={props.type !== 'equal' ? styles.botao : styles.equal}>
-      {props.type === 'clear' && (
-        <Text style={[styles.content, styles.clear]}>{props.value}</Text>
+      style={type !== 'equal' ? styles.botao : styles.equal}>
+      {type === 'clear' && (
+        <Text style={[styles.content, styles.clear]}>{value}</Text>
       )}
-      {props.type === 'operator' && (
-        <Text style={[styles.content, styles.operator]}>{props.value}</Text>
+      {type === 'operator' && (
+        <Text style={[styles.content, styles.operator]}>{value}</Text>
       )}
-      {props.type === 'number' && (
-        <Text style={[styles.content, styles.number]}>{props.value}</Text>
+      {type === 'number' && (
+        <Text style={[styles.content, styles.number]}>{value}</Text>
       )}
-      {props.type === 'equal' && (
-        <Text style={styles.content}>{props.value}</Text>
-      )}
+      {type === 'equal' && <Text style={styles.content}>{value}</Text>}
     </TouchableOpacity>
+  );
+};
+
+export const BackspaceButton = ({ value }) => {
+  return (
+    <View style={styles.backSpaceBox}>
+      <TouchableOpacity activeOpacity={0.5}>
+        <Image
+          source={{
+            uri: 'https://cdn-icons-png.flaticon.com/512/7156/7156272.png',
+          }}
+          style={styles.backspace}
+        />
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -64,5 +92,13 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').width * 0.2,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  backSpaceBox: {
+    // width: 'fit-content',
+    height: '25%',
+  },
+  backspace: {
+    height: 50,
+    width: 50,
   },
 });
