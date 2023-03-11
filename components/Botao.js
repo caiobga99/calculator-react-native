@@ -14,12 +14,12 @@ Não é possivel inserir mais de 15 digitos.
 NUMERO / 0 = Erro
 */
 export const Botao = ({ type, value }) => {
-  const [display, setDisplay] = useState(value);
+  // const [display, setDisplay] = useState(value);
 
-  const handleClickUpdateDisplay = (value) => {
-    setDisplay(value);
-    console.log(display);
-  };
+  // const handleClickUpdateDisplay = (value) => {
+  //   setDisplay(value);
+  //   console.log(display);
+  // };
 
   return (
     <TouchableOpacity
