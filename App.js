@@ -6,11 +6,10 @@ import {
   Dimensions,
   Image,
   StatusBar,
+  ToastAndroid,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState } from 'react';
-
-import { Botao, BackspaceButton } from './components/Botao';
 
 export default function App() {
   const [lastNumber, setLastNumber] = useState('');
@@ -62,52 +61,70 @@ export default function App() {
     '=',
   ];
 
+  const showToast = (message) => {
+    ToastAndroid.show(message, ToastAndroid.SHORT);
+  };
+
   const calculator = () => {
     const splitNums = currentNumber.split(' ');
     const current = parseFloat(splitNums[0]);
     const operator = splitNums[1];
     const previous = parseFloat(splitNums[2]);
+    if (operator === '÷' && previous === 0) {
+      showToast('Não é possivel dividir por 0.');
+      setLastNumber('');
+      return;
+    }
+
+    if (splitNums[0] === 'Erro') {
+      return;
+    }
+
     switch (operator) {
       case '+':
         setCurrentNumber((current + previous).toString());
         return;
-
       case '-':
         setCurrentNumber((current - previous).toString());
         return;
-
       case 'x':
         setCurrentNumber((current * previous).toString());
         return;
       case '÷':
-        if (previous === 0) return setCurrentNumber('Erro');
         setCurrentNumber((current / previous).toString());
+        return;
+      case '%':
+        setCurrentNumber(((current * previous) / 100).toString());
         return;
     }
   };
-  if (currentNumber.length >= 15) {
-    console.log('Não é possivel inserir mais de 15 digitos');
-  }
+
   const handleDisplay = (value) => {
     const currentNumberSplit = currentNumber.split(' ');
     const isOperator = currentNumberSplit[currentNumberSplit.length - 1] === '';
+    const lengthOfNumbersSplit = currentNumber.split(' ');
 
-    if ((value === '+') | (value === '-') | (value === 'x') | (value === '÷')) {
-      if (isOperator) return;
-      setCurrentNumber(currentNumber + ' ' + value + ' ');
-      return;
-    }
+    const filterOperators = (operator) => {
+      if (
+        (operator === '+') |
+        (operator === '-') |
+        (operator === 'x') |
+        (operator === '÷')
+      ) {
+        return;
+      }
+      return operator;
+    };
+
+    const previous = parseFloat(currentNumberSplit[2]);
+
+    const lengthOfNumbers = lengthOfNumbersSplit
+      .filter(filterOperators)
+      .toString()
+      .split('');
+    // console.log(lengthOfNumbers);
 
     switch (value) {
-      case '=':
-        if (isOperator) return;
-        setLastNumber(currentNumber + ' = ');
-        calculator();
-        return;
-      case 'C':
-        setCurrentNumber('');
-        setLastNumber('');
-        return;
       case 'DEL':
         if (isOperator) {
           setCurrentNumber(
@@ -119,11 +136,57 @@ export default function App() {
           );
         }
         return;
+      case 'C':
+        setCurrentNumber('');
+        setLastNumber('');
+        return;
+      case '=':
+        if (isNaN(previous)) return;
+        if (isOperator) return;
+        setLastNumber(currentNumber + ' = ');
+        calculator();
+        return;
+    }
+
+    if (lengthOfNumbers.length >= 15) {
+      showToast('Não é possivel inserir mais de 15 digitos.');
+      return;
+    }
+
+    switch (value) {
+      case '+':
+        if (currentNumber.includes('+')) return;
+        if (isOperator) return;
+        setCurrentNumber(currentNumber + ' ' + value + ' ');
+        return;
+      case '-':
+        if (currentNumber.includes('-')) return;
+        if (isOperator) return;
+        setCurrentNumber(currentNumber + ' ' + value + ' ');
+
+        return;
+      case 'x':
+        if (currentNumber.includes('x')) return;
+        if (isOperator) return;
+        setCurrentNumber(currentNumber + ' ' + value + ' ');
+
+        return;
+      case '÷':
+        if (currentNumber.includes('÷')) return;
+        if (isOperator) return;
+        setCurrentNumber(currentNumber + ' ' + value + ' ');
+        return;
+
       case '%':
+        if (isOperator) return;
+        if (currentNumber.includes('%')) return;
+
+        setCurrentNumber(currentNumber + ' ' + value + ' ');
         return;
       case '()':
         return;
       case '+/-':
+      //  deixa negativo o calculo/numero. para mudar o sinal do valor expoente.
         return;
       case '.':
         if (currentNumber.includes('.')) return;
@@ -142,7 +205,6 @@ export default function App() {
           <Text style={styles.historyText}>{lastNumber}</Text>
           <Text style={styles.result}>{currentNumber}</Text>
         </View>
-
         <View style={styles.backSpaceBox}>
           <TouchableOpacity
             activeOpacity={0.5}
